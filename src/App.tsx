@@ -3,10 +3,11 @@ import { Search, ChefHat, Globe, Sparkles, Calendar, ShoppingCart, ChevronDown, 
 
 const RecipeFinderApp = () => {
   // Recipe Finder State
-  const [ingredients, setIngredients] = useState('');
-  const [selectedCuisine, setSelectedCuisine] = useState('all');
-  const [searchResults, setSearchResults] = useState([]);
-  const [hasSearched, setHasSearched] = useState(false);
+const [searchResults, setSearchResults] = useState<any[]>([]);
+const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+const [mealPlan, setMealPlan] = useState<any[]>([]);
+const [shoppingList, setShoppingList] = useState<{[key: string]: any[]}>({});
+const [expandedCards, setExpandedCards] = useState<{[key: number]: boolean}>({});
   
   // Meal Planner State
   const [activeTab, setActiveTab] = useState('finder');
