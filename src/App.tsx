@@ -416,7 +416,7 @@ const RecipeFinderApp = () => {
     },
   ];
 
-  const cuisines = [...new Set(recipeDatabase.map(recipe => recipe.cuisine))].sort();
+const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine))).sort();
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   // Recipe Finder Functions
