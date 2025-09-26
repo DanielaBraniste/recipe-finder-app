@@ -3,20 +3,19 @@ import { Search, ChefHat, Globe, Sparkles, Calendar, ShoppingCart, ChevronDown, 
 
 const RecipeFinderApp = () => {
   // Recipe Finder State
-const [searchResults, setSearchResults] = useState<any[]>([]);
-const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
-const [mealPlan, setMealPlan] = useState<any[]>([]);
-const [shoppingList, setShoppingList] = useState<{[key: string]: any[]}>({});
-const [expandedCards, setExpandedCards] = useState<{[key: number]: boolean}>({});
+  const [ingredients, setIngredients] = useState<string>('');
+  const [selectedCuisine, setSelectedCuisine] = useState<string>('all');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
   
   // Meal Planner State
-  const [activeTab, setActiveTab] = useState('finder');
-  const [selectedCuisines, setSelectedCuisines] = useState([]);
-  const [dietaryPreference, setDietaryPreference] = useState('all');
-  const [mealPlan, setMealPlan] = useState([]);
-  const [shoppingList, setShoppingList] = useState({});
-  const [hasMealPlan, setHasMealPlan] = useState(false);
-  const [expandedCards, setExpandedCards] = useState({});
+  const [activeTab, setActiveTab] = useState<string>('finder');
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const [dietaryPreference, setDietaryPreference] = useState<string>('all');
+  const [mealPlan, setMealPlan] = useState<any[]>([]);
+  const [shoppingList, setShoppingList] = useState<{[key: string]: any[]}>({});
+  const [hasMealPlan, setHasMealPlan] = useState<boolean>(false);
+  const [expandedCards, setExpandedCards] = useState<{[key: number]: boolean}>({});
 
   // Enhanced recipe database with quantities, servings, and calories
   const recipeDatabase = [
@@ -417,7 +416,7 @@ const [expandedCards, setExpandedCards] = useState<{[key: number]: boolean}>({})
     },
   ];
 
-const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine))).sort();
+  const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine))).sort();
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   // Recipe Finder Functions
@@ -485,7 +484,7 @@ const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine)
   };
 
   // Meal Planner Functions
-  const handleCuisineToggle = (cuisine) => {
+  const handleCuisineToggle = (cuisine: string) => {
     setSelectedCuisines(prev => 
       prev.includes(cuisine) 
         ? prev.filter(c => c !== cuisine)
@@ -513,7 +512,7 @@ const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine)
       return;
     }
 
-    const selectedRecipes = [];
+    const selectedRecipes: any[] = [];
     const usedRecipes = new Set();
 
     while (selectedRecipes.length < 7 && availableRecipes.length > 0) {
@@ -534,18 +533,18 @@ const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine)
     setExpandedCards({});
   };
 
-  const toggleCardExpansion = (index) => {
+  const toggleCardExpansion = (index: number) => {
     setExpandedCards(prev => ({
       ...prev,
       [index]: !prev[index]
     }));
   };
 
-  const generateShoppingList = (recipes) => {
+  const generateShoppingList = (recipes: any[]) => {
     const allIngredients = new Map();
     
     recipes.forEach(recipe => {
-      recipe.ingredients.forEach(ingredient => {
+      recipe.ingredients.forEach((ingredient: any) => {
         const key = ingredient.name.toLowerCase();
         if (allIngredients.has(key)) {
           const existing = allIngredients.get(key);
@@ -581,7 +580,7 @@ const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine)
       'Other': []
     };
 
-    const categorizedIngredients = {};
+    const categorizedIngredients: {[key: string]: any[]} = {};
     
     Object.keys(categories).forEach(category => {
       categorizedIngredients[category] = [];
@@ -680,7 +679,7 @@ const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine)
                     onChange={(e) => setIngredients(e.target.value)}
                     placeholder="Enter ingredients separated by commas (e.g., chicken, rice, tomatoes, onions)"
                     className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all resize-none"
-                    rows="3"
+                    rows={3}
                   />
                 </div>
               </div>
@@ -751,7 +750,7 @@ const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine)
                         <div className="mb-4">
                           <h5 className="font-semibold text-gray-700 mb-2">Ingredients:</h5>
                           <div className="flex flex-wrap gap-2">
-                            {recipe.ingredients.map((ingredient, idx) => (
+                            {recipe.ingredients.map((ingredient: any, idx: number) => (
                               <span key={idx} className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-sm">
                                 {ingredient.quantity} {ingredient.unit} {ingredient.name}
                               </span>
@@ -900,7 +899,7 @@ const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine)
                           <div className="mb-4">
                             <h6 className="font-semibold text-gray-700 mb-2">Ingredients:</h6>
                             <div className="flex flex-wrap gap-2">
-                              {recipe.ingredients.map((ingredient, idx) => (
+                              {recipe.ingredients.map((ingredient: any, idx: number) => (
                                 <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
                                   {ingredient.quantity} {ingredient.unit} {ingredient.name}
                                 </span>
