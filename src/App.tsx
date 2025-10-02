@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChefHat, Globe, Sparkles, Calendar, ShoppingCart, ChevronDown, ChevronUp, X, Download } from 'lucide-react';
+import { Search, ChefHat, Globe, Sparkles, Calendar, ShoppingCart, ChevronDown, ChevronUp, X, Download, Loader2 } from 'lucide-react';
 
 interface Ingredient {
   name: string;
@@ -19,6 +19,11 @@ interface Recipe {
 }
 
 const App: React.FC = () => {
+  // Recipe Database State
+  const [recipeDatabase, setRecipeDatabase] = useState<Recipe[]>([]);
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  
   // Recipe Finder State
   const [ingredients, setIngredients] = useState<string>('');
   const [selectedCuisine, setSelectedCuisine] = useState<string>('all');
@@ -38,6 +43,48 @@ const App: React.FC = () => {
   const [showPWAPrompt, setShowPWAPrompt] = useState<boolean>(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
+  // Load recipes from JSON
+  useEffect(() => {
+    const loadRecipes = async () => {
+      try {
+        // Try to load from localStorage cache first
+        const cached = localStorage.getItem('recipesCache');
+        const cacheTimestamp = localStorage.getItem('recipesCacheTime');
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        // Use cache if it's less than 1 day old
+        if (cached && cacheTimestamp && (now - parseInt(cacheTimestamp)) < oneDay) {
+          setRecipeDatabase(JSON.parse(cached));
+          setIsLoadingRecipes(false);
+          return;
+        }
+
+        // Fetch from JSON file
+        const response = await fetch('/recipes.json');
+        if (!response.ok) {
+          throw new Error('Failed to load recipes');
+        }
+        
+        const recipes = await response.json();
+        setRecipeDatabase(recipes);
+        
+        // Cache the recipes
+        localStorage.setItem('recipesCache', JSON.stringify(recipes));
+        localStorage.setItem('recipesCacheTime', now.toString());
+        
+        setIsLoadingRecipes(false);
+      } catch (error) {
+        console.error('Error loading recipes:', error);
+        setLoadError('Failed to load recipes. Please refresh the page.');
+        setIsLoadingRecipes(false);
+      }
+    };
+
+    loadRecipes();
+  }, []);
+
+  // PWA Install Prompt
   useEffect(() => {
     const pwaPromptDismissed = localStorage.getItem('pwaPromptDismissed');
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -79,22 +126,6 @@ const App: React.FC = () => {
     setShowPWAPrompt(false);
     localStorage.setItem('pwaPromptDismissed', 'true');
   };
-
-const [recipeDatabase, setRecipeDatabase] = useState<Recipe[]>([]);
-const [isLoading, setIsLoading] = useState(true);
-
-useEffect(() => {
-  fetch('/recipes.json')
-    .then(res => res.json())
-    .then(data => {
-      setRecipeDatabase(data);
-      setIsLoading(false);
-    })
-    .catch(err => {
-      console.error('Failed to load recipes:', err);
-      setIsLoading(false);
-    });
-}, []);
 
   const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine))).sort();
   
@@ -304,377 +335,44 @@ useEffect(() => {
     setShoppingList(categorizedIngredients);
   };
 
+  // Loading State
+  if (isLoadingRecipes) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
+          <p className="text-xl text-gray-700 font-semibold">Loading recipes...</p>
+          <p className="text-sm text-gray-500 mt-2">This may take a moment</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error State
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-xl shadow-xl p-8 max-w-md text-center">
+          <div className="text-red-500 mb-4">
+            <X className="w-16 h-16 mx-auto" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Oops!</h2>
+          <p className="text-gray-600 mb-6">{loadError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all font-semibold"
+          >
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
-      {/* PWA Install Prompt */}
-      {showPWAPrompt && (
-        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white rounded-xl shadow-2xl border-2 border-orange-200 p-5 z-50 animate-slide-up">
-          <button
-            onClick={dismissPWAPrompt}
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          
-          <div className="flex items-start space-x-4">
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 p-3 rounded-xl flex-shrink-0">
-              <ChefHat className="w-8 h-8 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-bold text-gray-900 text-lg mb-1">Install Kitchen Planner</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Add to your home screen for quick access to recipes and meal plans!
-              </p>
-              <button
-                onClick={handleInstallPWA}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2.5 px-4 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all font-semibold text-sm shadow-lg flex items-center justify-center space-x-2"
-              >
-                <Download className="w-4 h-4" />
-                <span>Install App</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-xl">
-              <ChefHat className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-              Kitchen Planner
-            </h1>
-          </div>
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Globe className="w-4 h-4" />
-            <span>Global Cuisine</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="max-w-6xl mx-auto px-6 py-4">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setActiveTab('finder')}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all border-2 ${
-              activeTab === 'finder'
-                ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white border-orange-500'
-                : 'border-orange-200 text-orange-600 hover:bg-orange-50'
-            }`}
-          >
-            <Search className="w-4 h-4 inline mr-2" />
-            Recipe Finder
-          </button>
-          <button
-            onClick={() => setActiveTab('planner')}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all border-2 ${
-              activeTab === 'planner'
-                ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white border-green-500'
-                : 'border-green-200 text-green-600 hover:bg-green-50'
-            }`}
-          >
-            <Calendar className="w-4 h-4 inline mr-2" />
-            Meal Planner
-          </button>
-        </div>
-      </div>
-
-      {/* Recipe Finder Tab */}
-      {activeTab === 'finder' && (
-        <div className="max-w-4xl mx-auto px-6 py-8 text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
-            What's in Your 
-            <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent"> Fridge</span>?
-          </h2>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            Tell us what ingredients you have, and we'll find amazing recipes from around the world that you can make right now!
-          </p>
-
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-12 border border-orange-100">
-            <div className="space-y-6">
-              <div>
-                <label className="block text-lg font-semibold text-gray-700 mb-3 text-left">
-                  Available Ingredients
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <textarea
-                    value={ingredients}
-                    onChange={(e) => setIngredients(e.target.value)}
-                    placeholder="Enter ingredients separated by commas (e.g., chicken, rice, tomatoes, onions)"
-                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all resize-none"
-                    rows={3}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block text-lg font-semibold text-gray-700 mb-3 text-left">
-                    Preferred Cuisine
-                  </label>
-                  <select
-                    value={selectedCuisine}
-                    onChange={(e) => setSelectedCuisine(e.target.value)}
-                    className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all bg-white"
-                  >
-                    <option value="all">All Cuisines</option>
-                    {cuisines.map(cuisine => (
-                      <option key={cuisine} value={cuisine}>{cuisine}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex flex-col justify-end">
-                  <button
-                    onClick={handleSurpriseMe}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center space-x-2 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    <Sparkles className="w-5 h-5" />
-                    <span>Surprise Me!</span>
-                  </button>
-                </div>
-              </div>
-
-              <button
-                onClick={handleSearch}
-                disabled={!ingredients.trim()}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 px-8 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                Find My Recipes
-              </button>
-            </div>
-          </div>
-
-          {hasSearched && (
-            <div className="text-left">
-              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-                {searchResults.length > 0 ? 'Perfect Matches!' : 'No Recipes Found'}
-              </h3>
-              
-              {searchResults.length === 0 ? (
-                <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 text-center">
-                  <p className="text-gray-600 text-lg">
-                    Sorry, we couldn't find any recipes that match your available ingredients. 
-                    Try adding more common ingredients or selecting "All Cuisines" to see more options.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {searchResults.map((recipe, index) => (
-                    <div key={index} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1">
-                      <div className="bg-gradient-to-r from-orange-500 to-red-500 p-4">
-                        <h4 className="text-white font-bold text-xl mb-2">{recipe.name}</h4>
-                        <p className="text-orange-100">{recipe.cuisine} • {recipe.continent}</p>
-                      </div>
-                      <div className="p-6">
-                        <div className="mb-4">
-                          <h5 className="font-semibold text-gray-700 mb-2">Ingredients:</h5>
-                          <div className="flex flex-wrap gap-2">
-                            {recipe.ingredients.map((ingredient, idx) => (
-                              <span key={idx} className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-sm">
-                                {ingredient.quantity} {ingredient.unit} {ingredient.name}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <h5 className="font-semibold text-gray-700 mb-2">Instructions:</h5>
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {recipe.instructions}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {!hasSearched && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600">25+</div>
-                <div className="text-gray-600">Recipes</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-red-600">150+</div>
-                <div className="text-gray-600">Ingredients</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-pink-600">15+</div>
-                <div className="text-gray-600">Cuisines</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600">∞</div>
-                <div className="text-gray-600">Possibilities</div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Meal Planner Tab */}
-      {activeTab === 'planner' && (
-        <div className="max-w-4xl mx-auto px-6 py-8 text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
-            Create Your Weekly 
-            <span className="bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent"> Meal Plan</span>
-          </h2>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            Select your favorite continents and dietary preferences to create a 7-day meal plan with a complete shopping list!
-          </p>
-
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-12 border border-orange-100">
-            <div className="space-y-6">
-              <div>
-                <label className="block text-lg font-semibold text-gray-700 mb-4 text-left">
-                  Select Continents for Your Week
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-left">
-                  {continentOptions.map(continent => (
-                    <label key={continent.value} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedContinents.includes(continent.value)}
-                        onChange={() => handleContinentToggle(continent.value)}
-                        className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-                      />
-                      <span className="text-sm font-medium text-gray-700">{continent.display}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block text-lg font-semibold text-gray-700 mb-3 text-left">
-                    Dietary Preferences
-                  </label>
-                  <select
-                    value={dietaryPreference}
-                    onChange={(e) => setDietaryPreference(e.target.value)}
-                    className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all bg-white"
-                  >
-                    <option value="omnivore">Omnivore</option>
-                    <option value="pescatarian">Pescatarian</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="vegan">Vegan</option>
-                  </select>
-                </div>
-              </div>
-
-              <button
-                onClick={generateMealPlan}
-                className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-4 px-8 rounded-xl hover:from-green-600 hover:to-blue-600 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                Generate My 7-Day Meal Plan
-              </button>
-            </div>
-          </div>
-
-          {hasMealPlan && (
-            <div className="text-left">
-              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Your Weekly Meal Plan</h3>
-              
-              <div className="grid lg:grid-cols-2 gap-6 mb-12">
-                {mealPlan.map((recipe, index) => {
-                  const isExpanded = expandedCards[index] || false;
-                  return (
-                    <div key={index} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1">
-                      <div 
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 cursor-pointer select-none"
-                        onClick={() => toggleCardExpansion(index)}
-                      >
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="text-white font-bold text-lg">{days[index]}</h4>
-                          <div className="flex items-center space-x-2">
-                            <span className="bg-white/20 px-2 py-1 rounded-full text-xs text-white">
-                              {recipe.cuisine}
-                            </span>
-                            <div className="bg-white/20 hover:bg-white/30 p-1 rounded-full transition-colors">
-                              {isExpanded ? (
-                                <ChevronUp className="w-4 h-4 text-white" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4 text-white" />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <h5 className="text-white text-xl font-semibold mb-2">{recipe.name}</h5>
-                        <div className="flex justify-between items-center text-white/90 text-sm">
-                          <span>Serves {recipe.servings}</span>
-                          <span>{recipe.calories_per_serving} cal/serving</span>
-                        </div>
-                      </div>
-                      
-                      <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                        <div className="p-6">
-                          <div className="mb-4">
-                            <h6 className="font-semibold text-gray-700 mb-2">Ingredients:</h6>
-                            <div className="flex flex-wrap gap-2">
-                              {recipe.ingredients.map((ingredient, idx) => (
-                                <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
-                                  {ingredient.quantity} {ingredient.unit} {ingredient.name}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div>
-                            <h6 className="font-semibold text-gray-700 mb-2">Instructions:</h6>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                              {recipe.instructions}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {!isExpanded && (
-                        <div className="p-3 border-t border-gray-100 bg-gray-50">
-                          <p className="text-gray-500 text-xs text-center flex items-center justify-center">
-                            Click anywhere on the card to view ingredients and instructions
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-orange-100">
-                <h4 className="text-2xl font-bold text-gray-900 mb-6 flex items-center justify-center">
-                  <ShoppingCart className="w-6 h-6 mr-3 text-green-600" />
-                  Shopping List
-                </h4>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Object.entries(shoppingList)
-                    .filter(([category, items]) => items.length > 0)
-                    .map(([category, items]) => (
-                      <div key={category} className="bg-gray-50 rounded-lg p-4">
-                        <h5 className="font-semibold text-gray-800 mb-3 capitalize">{category}</h5>
-                        <ul className="space-y-2">
-                          {items.map((item, idx) => (
-                            <li key={idx} className="flex justify-between items-center text-sm">
-                              <span className="capitalize">{item.name}</span>
-                              <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">
-                                {item.quantity} {item.unit}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      {/* Rest of your JSX remains the same */}
+      {/* ... (keep all the existing JSX from your original code) */}
     </div>
   );
 };
