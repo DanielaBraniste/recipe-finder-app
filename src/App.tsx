@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChefHat, Globe, Sparkles, Calendar, ShoppingCart, ChevronDown, ChevronUp, X, Download, Loader2 } from 'lucide-react';
+import { Search, ChefHat, Sparkles, Calendar, ShoppingCart, ChevronDown, ChevronUp, X, Download, Loader2 } from 'lucide-react';
 
 interface Ingredient {
   name: string;
@@ -122,6 +122,25 @@ const App: React.FC = () => {
     localStorage.setItem('pwaPromptDismissed', 'true');
   };
 
+  // Submit form data to Netlify
+  const submitToNetlify = (action: string, recipes: Recipe[]) => {
+    const formData = new FormData();
+    formData.append('form-name', 'recipe-search');
+    formData.append('ingredients', ingredients);
+    formData.append('action', action);
+    formData.append('cuisine', selectedCuisine);
+    formData.append('recipes-found', recipes.map(r => r.name).join(', '));
+    formData.append('recipe-count', recipes.length.toString());
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData as any).toString()
+    })
+      .then(() => console.log('Form submitted successfully'))
+      .catch(error => console.error('Form submission error:', error));
+  };
+
   const cuisines = Array.from(new Set(recipeDatabase.map(recipe => recipe.cuisine))).sort();
   
   const continentOptions = [
@@ -188,6 +207,7 @@ const App: React.FC = () => {
     const results = findMatchingRecipes();
     setSearchResults(results);
     setHasSearched(true);
+    submitToNetlify('search', results);
   };
 
   const handleSurpriseMe = () => {
@@ -196,6 +216,7 @@ const App: React.FC = () => {
       const results = findMatchingRecipes();
       setSearchResults(results);
       setHasSearched(true);
+      submitToNetlify('surprise-me', results);
     }, 100);
   };
 
@@ -362,6 +383,15 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
+      {/* Hidden Netlify Form for Detection */}
+      <form name="recipe-search" data-netlify="true" hidden>
+        <input type="text" name="ingredients" />
+        <input type="text" name="action" />
+        <input type="text" name="cuisine" />
+        <input type="text" name="recipes-found" />
+        <input type="text" name="recipe-count" />
+      </form>
+
       {showPWAPrompt && (
         <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white rounded-xl shadow-2xl border-2 border-orange-200 p-5 z-50 animate-slide-up">
           <button
@@ -402,10 +432,15 @@ const App: React.FC = () => {
               Kitchen Planner
             </h1>
           </div>
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Globe className="w-4 h-4" />
-            <span>Global Cuisine</span>
-          </div>
+          <a 
+            href="https://buymeacoffee.com/tadamn" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all font-semibold text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          >
+            <span className="text-lg">☕</span>
+            <span>Donate</span>
+          </a>
         </div>
       </div>
 
