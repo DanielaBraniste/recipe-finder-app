@@ -13,7 +13,7 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     
-    <!-- Netlify Form - Must be in HTML for detection -->
+    <!-- Netlify Form for Recipe Finder -->
     <form name="recipe-search" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
       <input type="hidden" name="form-name" value="recipe-search" />
       <input type="text" name="bot-field" />
@@ -21,6 +21,16 @@
       <input type="text" name="action" />
       <input type="text" name="continent" />
       <input type="text" name="recipes-found" />
+      <input type="text" name="recipe-count" />
+    </form>
+
+    <!-- Netlify Form for Meal Planner -->
+    <form name="meal-planner" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="meal-planner" />
+      <input type="text" name="bot-field" />
+      <input type="text" name="continents-selected" />
+      <input type="text" name="dietary-preference" />
+      <input type="text" name="recipes-generated" />
       <input type="text" name="recipe-count" />
     </form>
     
