@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kitchen Planner - Recipe Finder & Meal Planner</title>
   
-  <!-- Favicon with KP on dark orange -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ea580c' rx='15'/><text x='50' y='50' text-anchor='middle' dominant-baseline='central' font-family='system-ui, -apple-system, sans-serif' font-size='45' font-weight='700' fill='white'>KP</text></svg>">
+  <!-- Favicon with chef's hat -->
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZWE1ODBjIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTYgMTMuODdBNCA0IDAgMCAxIDcuNDEgNmE1LjExIDUuMTEgMCAwIDEgMS4wNS0xLjU0IDUgNSAwIDAgMSA3LjA4IDBBNS4xMSA1LjExIDAgMCAxIDE2LjU5IDYgNCA0IDAgMCAxIDE4IDEzLjg3VjIxSDZaIi8+PGxpbmUgeDE9IjYiIHkxPSIxNyIgeDI9IjE4IiB5Mj0iMTciLz48L3N2Zz4=">
   
   <!-- PWA Meta Tags -->
   <meta name="theme-color" content="#ea580c">
@@ -14,6 +14,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Kitchen Planner">
   <meta name="description" content="Find recipes from your ingredients and create weekly meal plans with shopping lists">
+  
+  <!-- Apple Touch Icon -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0iI2VhNTgwYyIgcng9IjQwIi8+PHBhdGggZD0iTTQ4IDExMC45NkEzMiAzMiAwIDAgMSA1OS4yOCA0OGE0MC44OCA0MC44OCAwIDAgMSA4LjQtMTIuMzIgNDAgNDAgMCAwIDEgNTYuNjQgMCA0MC44OCA0MC44OCAwIDAgMSA4LjQgMTIuMzJBMzIgMzIgMCAwIDEgMTQ0IDExMC45NlYxNjhINDhaIiBmaWxsPSJ3aGl0ZSIvPjxsaW5lIHgxPSI0OCIgeTE9IjEzNiIgeDI9IjE0NCIgeTI9IjEzNiIgc3Ryb2tlPSIjZWE1ODBjIiBzdHJva2Utd2lkdGg9IjgiLz48L3N2Zz4=">
+  
+  <link rel="manifest" id="manifest-placeholder">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -23,6 +28,71 @@
 </head>
 <body>
   <div id="root"></div>
+  
+  <script>
+    // Create and register manifest
+    const manifest = {
+      name: "Kitchen Planner",
+      short_name: "Kitchen Planner",
+      description: "Find recipes and create meal plans",
+      start_url: "./",
+      display: "standalone",
+      background_color: "#ffffff",
+      theme_color: "#ea580c",
+      icons: [
+        {
+          src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0iI2VhNTgwYyIgcng9IjQwIi8+PHBhdGggZD0iTTQ4IDExMC45NkEzMiAzMiAwIDAgMSA1OS4yOCA0OGE0MC44OCA0MC44OCAwIDAgMSA4LjQtMTIuMzIgNDAgNDAgMCAwIDEgNTYuNjQgMCA0MC44OCA0MC44OCAwIDAgMSA4LjQgMTIuMzJBMzIgMzIgMCAwIDEgMTQ0IDExMC45NlYxNjhINDhaIiBmaWxsPSJ3aGl0ZSIvPjxsaW5lIHgxPSI0OCIgeTE9IjEzNiIgeDI9IjE0NCIgeTI9IjEzNiIgc3Ryb2tlPSIjZWE1ODBjIiBzdHJva2Utd2lkdGg9IjgiLz48L3N2Zz4=",
+          sizes: "192x192",
+          type: "image/svg+xml"
+        },
+        {
+          src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2VhNTgwYyIgcng9IjEwMCIvPjxwYXRoIGQ9Ik0xMjggMjk1LjhBODUuMzMgODUuMzMgMCAwIDEgMTU4LjEgMTI4YTEwOS4wMSAxMDkuMDEgMCAwIDEgMjIuNC0zMi44NSAxMDYuNjcgMTA2LjY3IDAgMCAxIDE1MS4wNiAwIDEwOS4wMSAxMDkuMDEgMCAwIDEgMjIuNCAzMi44NUE4NS4zMyA4NS4zMyAwIDAgMSAzODQgMjk1LjhWNDQ4SDEyOFoiIGZpbGw9IndoaXRlIi8+PGxpbmUgeDE9IjEyOCIgeTE9IjM2MyIgeDI9IjM4NCIgeTI9IjM2MyIgc3Ryb2tlPSIjZWE1ODBjIiBzdHJva2Utd2lkdGg9IjIwIi8+PC9zdmc+",
+          sizes: "512x512",
+          type: "image/svg+xml"
+        }
+      ]
+    };
+
+    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const manifestURL = URL.createObjectURL(manifestBlob);
+    document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        const swCode = `
+          const CACHE_NAME = 'kitchen-planner-v1';
+          
+          self.addEventListener('install', (event) => {
+            event.waitUntil(
+              caches.open(CACHE_NAME).then((cache) => {
+                return cache.addAll(['./', './index.html']);
+              })
+            );
+          });
+          
+          self.addEventListener('fetch', (event) => {
+            event.respondWith(
+              caches.match(event.request).then((response) => {
+                return response || fetch(event.request);
+              })
+            );
+          });
+        `;
+        
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        const swURL = URL.createObjectURL(swBlob);
+        
+        navigator.serviceWorker.register(swURL)
+          .then((registration) => {
+            console.log('Service Worker registered:', registration);
+          })
+          .catch((error) => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
   
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -47,29 +117,35 @@
       // PWA Install Prompt State
       const [showPWAPrompt, setShowPWAPrompt] = useState(false);
       const [deferredPrompt, setDeferredPrompt] = useState(null);
+      const [canInstall, setCanInstall] = useState(false);
 
       // Check if user has interacted and show PWA prompt
       useEffect(() => {
         // Check if already dismissed or installed
         const pwaPromptDismissed = localStorage.getItem('pwaPromptDismissed');
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                           window.navigator.standalone === true;
         
-        if (!pwaPromptDismissed && !isStandalone) {
-          // Show prompt after user has had some interaction (3 seconds delay)
-          const timer = setTimeout(() => {
-            setShowPWAPrompt(true);
-          }, 3000);
-          
-          return () => clearTimeout(timer);
-        }
-
         // Listen for beforeinstallprompt event
         const handleBeforeInstall = (e) => {
           e.preventDefault();
           setDeferredPrompt(e);
+          setCanInstall(true);
+          
+          if (!pwaPromptDismissed && !isStandalone) {
+            // Show prompt after user has had some interaction (3 seconds delay)
+            setTimeout(() => {
+              setShowPWAPrompt(true);
+            }, 3000);
+          }
         };
 
         window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+        
+        // Check if already installed
+        if (isStandalone) {
+          console.log('App is running as PWA');
+        }
         
         return () => {
           window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
@@ -80,9 +156,16 @@
         if (deferredPrompt) {
           deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
+          console.log(`User response to the install prompt: ${outcome}`);
+          
           if (outcome === 'accepted') {
+            console.log('User accepted the install prompt');
             setDeferredPrompt(null);
+            setCanInstall(false);
           }
+        } else {
+          // Fallback for browsers that don't support beforeinstallprompt
+          alert('To install this app:\n\n• On iOS: Tap the Share button and select "Add to Home Screen"\n• On Android: Tap the menu and select "Install App" or "Add to Home Screen"');
         }
         setShowPWAPrompt(false);
         localStorage.setItem('pwaPromptDismissed', 'true');
@@ -592,7 +675,7 @@
           // Dietary preference filtering
           let dietaryMatch = false;
           if (dietaryPreference === 'omnivore') {
-            dietaryMatch = true; // All types
+            dietaryMatch = true;
           } else if (dietaryPreference === 'pescatarian') {
             dietaryMatch = recipe.type === 'seafood';
           } else if (dietaryPreference === 'vegetarian') {
