@@ -401,7 +401,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
       {/* Hidden Netlify Form for Detection */}
-      <form name="recipe-search" netlify netlify-honeypot="bot-field" hidden>
+      <form name="recipe-search" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
         <input type="hidden" name="form-name" value="recipe-search" />
         <input type="text" name="ingredients" />
         <input type="text" name="action" />
