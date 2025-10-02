@@ -1,0 +1,20 @@
+{
+  "short_name": "Kitchen Planner",
+  "name": "Kitchen Planner - Recipe Finder & Meal Planner",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0iI2VhNTgwYyIgcng9IjQwIi8+PHBhdGggZD0iTTQ4IDExMC45NkEzMiAzMiAwIDAgMSA1OS4yOCA0OGE0MC44OCA0MC44OCAwIDAgMSA4LjQtMTIuMzIgNDAgNDAgMCAwIDEgNTYuNjQgMCA0MC44OCA0MC44OCAwIDAgMSA4LjQgMTIuMzJBMzIgMzIgMCAwIDEgMTQ0IDExMC45NlYxNjhINDhaIiBmaWxsPSJ3aGl0ZSIvPjxsaW5lIHgxPSI0OCIgeTE9IjEzNiIgeDI9IjE0NCIgeTI9IjEzNiIgc3Ryb2tlPSIjZWE1ODBjIiBzdHJva2Utd2lkdGg9IjgiLz48L3N2Zz4=",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2VhNTgwYyIgcng9IjEwMCIvPjxwYXRoIGQ9Ik0xMjggMjk1LjhBODUuMzMgODUuMzMgMCAwIDEgMTU4LjEgMTI4YTEwOS4wMSAxMDkuMDEgMCAwIDEgMjIuNC0zMi44NSAxMDYuNjcgMTA2LjY3IDAgMCAxIDE1MS4wNiAwIDEwOS4wMSAxMDkuMDEgMCAwIDEgMjIuNCAzMi44NUE4NS4zMyA4NS4zMyAwIDAgMSAzODQgMjk1LjhWNDQ4SDEyOFoiIGZpbGw9IndoaXRlIi8+PGxpbmUgeDE9IjEyOCIgeTE9IjM2MyIgeDI9IjM4NCIgeTI9IjM2MyIgc3Ryb2tlPSIjZWE1ODBjIiBzdHJva2Utd2lkdGg9IjIwIi8+PC9zdmc+",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ea580c",
+  "background_color": "#ffffff"
+}
