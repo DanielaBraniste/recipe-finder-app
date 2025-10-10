@@ -288,7 +288,7 @@ const App: React.FC = () => {
       
       const continentMatch = selectedCuisine === 'all' || selectedCuisine === 'surprise' || recipe.continent === selectedCuisine;
       
-      return hasUserIngredients && missingIngredients <= 2 && continentMatch;
+      return hasUserIngredients && missingIngredients <= 1 && continentMatch;
     });
 
     if (selectedCuisine === 'surprise') {
