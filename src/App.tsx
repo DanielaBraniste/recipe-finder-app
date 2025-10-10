@@ -33,7 +33,6 @@ const App: React.FC = () => {
   // Ingredient Autocomplete State
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [currentInput, setCurrentInput] = useState<string>('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
   
   // Meal Planner State
@@ -142,7 +141,6 @@ const App: React.FC = () => {
     setShowPWAPrompt(false);
     localStorage.setItem('pwaPromptDismissed', 'true');
   };
-
   const dismissPWAPrompt = () => {
     setShowPWAPrompt(false);
     localStorage.setItem('pwaPromptDismissed', 'true');
@@ -217,7 +215,6 @@ const App: React.FC = () => {
 
     const lastCommaIndex = value.lastIndexOf(',');
     const currentWord = value.slice(lastCommaIndex + 1).trim().toLowerCase();
-    setCurrentInput(currentWord);
 
     if (currentWord.length >= 2) {
       const filtered = commonIngredients
@@ -327,7 +324,6 @@ const App: React.FC = () => {
         : [...prev, continentValue]
     );
   };
-
   const generateMealPlan = () => {
     if (selectedContinents.length === 0) {
       alert('Please select at least one continent for your meal plan.');
@@ -451,7 +447,6 @@ const App: React.FC = () => {
 
     setShoppingList(categorizedIngredients);
   };
-
   const copyShoppingListToClipboard = async () => {
     let shoppingListText = '🛒 SHOPPING LIST - Weekly Meal Plan\n';
     shoppingListText += '═══════════════════════════════════\n\n';
@@ -512,7 +507,8 @@ const App: React.FC = () => {
       </div>
     );
   }
-return (
+
+  return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
       {showPWAPrompt && (
         <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white rounded-xl shadow-2xl border-2 border-orange-200 p-5 z-50 animate-slide-up">
@@ -645,7 +641,6 @@ return (
                   💡 Start typing to see ingredient suggestions (min 2 letters). Separate with commas.
                 </p>
               </div>
-
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-lg font-semibold text-gray-700 mb-3 text-left">
@@ -878,7 +873,8 @@ return (
                   );
                 })}
               </div>
-<div className="bg-white rounded-2xl shadow-xl p-8 border border-orange-100">
+
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-orange-100">
                 <div className="flex items-center justify-between mb-6">
                   <h4 className="text-2xl font-bold text-gray-900 flex items-center">
                     <ShoppingCart className="w-6 h-6 mr-3 text-green-600" />
@@ -934,4 +930,3 @@ return (
 };
 
 export default App;
-              
