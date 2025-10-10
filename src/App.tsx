@@ -214,7 +214,6 @@ const App: React.FC = () => {
     { display: 'Oceanian', value: 'Oceania' },
     { display: 'Caribbean', value: 'Caribbean' }
   ];
-  
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   // AUTOCOMPLETE HANDLER - THIS IS THE KEY FUNCTION
@@ -222,6 +221,7 @@ const App: React.FC = () => {
     const value = e.target.value;
     console.log('🟢 INPUT CHANGED:', value);
     setIngredients(value);
+
     // Get the current word being typed (after last comma)
     const lastCommaIndex = value.lastIndexOf(',');
     const currentWord = value.slice(lastCommaIndex + 1).trim().toLowerCase();
@@ -394,6 +394,7 @@ const App: React.FC = () => {
     
     submitMealPlanToNetlify(selectedRecipes);
   };
+
   const toggleCardExpansion = (index: number) => {
     setExpandedCards(prev => ({
       ...prev,
@@ -403,7 +404,6 @@ const App: React.FC = () => {
 
   const generateShoppingList = (recipes: Recipe[]) => {
     const allIngredients = new Map<string, Ingredient>();
-    
     recipes.forEach(recipe => {
       recipe.ingredients.forEach((ingredient) => {
         const key = ingredient.name.toLowerCase();
@@ -506,7 +506,8 @@ const App: React.FC = () => {
       </div>
     );
   }
-    if (loadError) {
+
+  if (loadError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-xl shadow-xl p-8 max-w-md text-center">
@@ -650,18 +651,6 @@ const App: React.FC = () => {
                         zIndex: 9999
                       }}
                     >
-                      {/* AUTOCOMPLETE DROPDOWN - SUPER VISIBLE VERSION */}
-                  {showSuggestions && suggestions.length > 0 && (
-                    <div 
-                      className="absolute left-0 right-0 top-full mt-2 bg-white border-4 border-red-500 rounded-xl shadow-2xl max-h-60 overflow-y-auto z-[9999]"
-                      style={{
-                        position: 'absolute',
-                        width: '100%',
-                        backgroundColor: 'white',
-                        border: '4px solid red',
-                        zIndex: 9999
-                      }}
-                    >
                       <div className="bg-red-500 text-white text-sm font-bold px-3 py-2">
                         🎯 CLICK TO SELECT (Showing {suggestions.length} suggestions):
                       </div>
@@ -698,7 +687,7 @@ const App: React.FC = () => {
                     <strong>🐛 DEBUG:</strong><br/>
                     showSuggestions: <span className={showSuggestions ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>{String(showSuggestions)}</span><br/>
                     suggestions.length: <span className="font-bold">{suggestions.length}</span><br/>
-                    currentInput: "<span className="font-bold">{currentInput}"</span><br/>
+                    currentInput: &quot;<span className="font-bold">{currentInput}</span>&quot;<br/>
                     {suggestions.length > 0 && (
                       <>Suggestions: {suggestions.join(', ')}</>
                     )}
@@ -793,7 +782,8 @@ const App: React.FC = () => {
               )}
             </div>
           )}
-            {!hasSearched && (
+
+          {!hasSearched && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-600">1000+</div>
@@ -815,8 +805,7 @@ const App: React.FC = () => {
           )}
         </div>
       )}
-
-      {activeTab === 'planner' && (
+{activeTab === 'planner' && (
         <div className="max-w-4xl mx-auto px-6 py-8 text-center">
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
             Create Your Weekly 
