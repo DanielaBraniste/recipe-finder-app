@@ -232,7 +232,7 @@ const App: React.FC = () => {
       
       const continentMatch = selectedCuisine === 'all' || selectedCuisine === 'surprise' || recipe.continent === selectedCuisine;
       
-      return hasUserIngredients && missingIngredients <= 2 && continentMatch;
+      return hasUserIngredients && missingIngredients <= 1 && continentMatch;
     });
 
     if (selectedCuisine === 'surprise') {
@@ -258,7 +258,6 @@ const App: React.FC = () => {
       submitToNetlify('surprise-me', results);
     }, 100);
   };
-
   const handleContinentToggle = (continentValue: string) => {
     setSelectedContinents(prev => 
       prev.includes(continentValue) 
@@ -598,7 +597,6 @@ const App: React.FC = () => {
               </button>
             </div>
           </div>
-
           {hasSearched && (
             <div className="text-left">
               <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
